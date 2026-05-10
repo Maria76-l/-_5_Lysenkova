@@ -1,41 +1,52 @@
-# The command that runs the program. If the interpreter field is set, it will have priority and this run command will do nothing
+# Блок базовой конфигурации запуска
 run = "python3 main.py"
-
-# The primary language of the repl. There can be others, though!
+# Команда, выполняемая при нажатии кнопки "Run" в интерфейсе Replit.
+# python3 — интерпретатор Python версии 3.x;
+# main.py — точка входа приложения
 language = "python3"
 entrypoint = "main.py"
-# A list of globs that specify which files and directories should
-# be hidden in the workspace.
+# Основной язык проекта
 hidden = ["venv", ".config", "**/__pycache__", "**/.mypy_cache", "**/*.pyc"]
 modules = ["python-3.10"]
-
-# Specifies which nix channel to use when building the environment.
+# Указывает Replit использовать Python 3.10 как системный модуль
+# Блок конфигурации Nix- окружения  
 [nix]
 channel = "stable-22_11"
-packages = ["gdb"]
+# Nix-канал "stable-22_11" — стабильный выпуск пакетов Nix от ноября 2022.
+# Гарантирует воспроизводимость системных зависимостей.
 
+packages = ["gdb"]
+# Дополнительный системный пакет: gdb — GNU Debugger
+#Блок переменных окружения
 [env]
 
-# Enable unit tests. This is only supported for a few languages.
+# Блок конфигурации тестирования
 [unitTest]
 language = "python3"
+# Включает поддержку модульного тестирования Python в Replit.
+# Позволяет запускать тесты через встроенный интерфейс тестирования.
 
-# These are the files that need to be preserved when this 
-# language template is used as the base language template
-# for Python repos imported from GitHub
+#Блок настроек импорта с GITHUB
 [gitHubImport]
 requiredFiles = [".replit", "replit.nix", ".config", "venv"]
-
+# Файлы, которые должны быть сохранены при использовании этого проекта как шаблона при импорте Python-репозитория с GitHub.
+# Блок запуска
 [deployment]
 run = ["sh", "-c", "python3 main.py"]
-
+#Блок портов
 [[ports]]
 localPort = 5000
+# Внутренний порт, на котором Flask-сервер принимает соединения.
+# Соответствует app.run("0.0.0.0") без явного указания порта (5000 по умолчанию).
 externalPort = 80
-
+# Внешний порт, на который Replit проксирует запросы из браузера.
+# Порт 80 — стандартный HTTP-порт, доступный по публичному URL.
+#Блок конфигурации агента Replit
 [agent]
 expertMode = true
-
+# Включает расширенный режим агента Replit AI,
+# позволяющий выполнять более сложные задачи автоматизации.
+# Блок конфигурации рабочих процессов
 [workflows]
 runButton = "Project"
 
@@ -55,7 +66,12 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python3 main.py"
+# Выполняет команду в shell — запускает Flask-сервер.
 waitForPort = 5000
+# Replit ожидает, пока порт 5000 не начнёт принимать соединения,
+# прежде чем считать workflow успешно запущенным.
+# Это гарантирует, что предпросмотр откроется только после готовности сервера.
 
 [workflows.workflow.metadata]
 outputType = "webview"
+# Указывает Replit открыть результат в панели предпросмотра браузера (webview)

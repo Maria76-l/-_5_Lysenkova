@@ -2,37 +2,42 @@
 <html>
 
 <head>
+
+  <!-- Блок метаданных и настройки страницы-->
   <meta charset="UTF-8">
-
+  <!-- charset="UTF-8" — кодировка для поддержки кириллицы и спецсимволов -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <!-- viewport — обеспечивает корректное отображение на мобильных устройствах -->
   <title>Roboflow + Replit Example</title>
 
-  <!-- Load roboflow.js, the script that will handle loading and running our computer vision model in the browser -->
+  <!-- Блок подключения стилей и скриптов -->
   <script src="https://cdn.jsdelivr.net/npm/inferencejs"></script>
-  
+  <!-- Загружает библиотеку inferencejs из CDN jsDelivr.
+   Эта библиотека предоставляет классы InferenceEngine и CVImage,
+   которые используются в script.js для запуска модели в браузере -->
+
   <link rel="stylesheet" href="/static/styles.css" />
-
+  <!-- Подключает файл стилей styles.css из папки static -->
   <script>
-    // Replace the key below with your Roboflow publishable key
+    
     var publishable_key = "rf_l8GLzZgLQL6gZLAin1iU";
-
-    // Change these values to set your model name, version, and the
-    // confidence threshold that must be met for the model to return
-    // a prediction.
-
-    // We recommend setting a low CONFIDENCE_THRESHOLD value while testing
-    // and filtering out predictions by confidence level using the
-    //"Prediction Confidence %" filter
+    //Публичный ключ для доступа к API Roboflow   
 
     const CONFIDENCE_THRESHOLD = 0.1;
+    // Минимальный порог вероятности (уверенности) (от 0 до 1) для принятия предсказания
     const MODEL_NAME = "microsoft-coco";
+    // Название модели, которая будет использоваться для предсказаний
+    // microsoft-coco — предобученная модель на наборе данных MS COCO,
+    // распознаёт 80 классов объектов (люди, стулья, чашки и т.д.)
+
     const MODEL_VERSION = 9;
+    // Версия модели, которую мы будем использовать
   </script>
 </head>
 
 <body>
   <main>
+    <!-- Основной контент страницы -->
     <h1>Roboflow + Replit Web Example 🚀</h1>
     <p>Roboflow enables you to build and run custom computer vision models in your browser, on your device (i.e. NVIDIA
       Jetson, Luxonis OAK, via Docker), and via API.
@@ -43,27 +48,32 @@
 
     <p>Using the demo below, you can identify <a href="https://universe.roboflow.com/jacob-solawetz/microsoft-coco">80
         different objects</a> using your webcam, from people to chairs to cups.</p>
-
+<!-- Блок загрузки и отображения видео -->
     <p id="loading">Loading...</p>
 
-    <!-- The canvas below is required -->
+    
     <section class="infer-widget">
       <canvas width="640" height="480" id="video_canvas"></canvas>
+    <!-- Элемент canvas с идентификатором video_canvas, который будет использоваться для отображения видео и результатов предсказаний -->
     </section>
-
+<!-- Блок настроек и ссылок -->
     <section id="settings">
       <label for="confidence">Prediction Confidence %</label><br>
       <input type="range" min="1" max="100" value="60" class="slider" id="confidence">
+  <!-- Ползунок для настройки порога уверенности предсказаний -->
     </section>
 
     <section class="links">
       <a href="https://blog.roboflow.com/getting-started-with-roboflow/" class="styled-button">Build a Custom Model</a>
+      <!-- Кнопка-ссылка на статью о создании собственной модели -->
       <a href="https://universe.roboflow.com" class="styled-button styled-button-turqouise">Explore 50k+
         Models and Datasets</a>
     </section>
+    <!-- Кнопка-ссылка на Roboflow Universe для поиска моделей и наборов данных -->
 
     <!-- Load our application logic -->
     <script src="/static/script.js"></script>
+    <!-- Подключает файл скрипта script.js из папки static, который содержит логику работы приложения -->
   </main>
 </body>
 

@@ -1,40 +1,42 @@
+/* Блок сброса стилей и базовых настроек */
 html, body {
   height: 100%;
   width: 100%;
   font-family: Arial, Helvetica, sans-serif;
 }
-
+/* Устанавливает высоту и ширину для html и body на 100%, чтобы они занимали весь экран. Устанавливает шрифт Arial, Helvetica, sans-serif для всего текста на странице. */
 p, a {
   line-height: 1.5em;
 }
-
+/* Устанавливаетмежстрочный интервал 1.5, что делает текст более читаемым. */
+/* Блок стилей для элементов интерфейса */
 #loading {
   display: none;
 }
-
+/* Скрывает элемент с идентификатором loading. */
 #settings {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-
+/* Устанавливает отступы сверху и снизу для элемента с идентификатором settings. */
 h1, a {
   color: #6706ce;
 }
-
+/* Устанавливает цвет текста для элементов h1 и a. */
 label {
   font-weight: 50px;
 }
-
+/* Устанавливает жирность шрифта для элемента label. */
 a {
   text-decoration: none;
 }
-
+/* Убирает подчеркивание у ссылок. */
 main {
   width: 40em;
   margin: auto;
   text-align: center;
 }
-
+/* Устанавливает ширину основного контейнера на 40em, центрирует его и выравнивает текст по центру. */
 .styled-button {
   color: #fff;
   text-align: center;
@@ -49,18 +51,18 @@ main {
   margin-bottom: 25px;
   width: 100%;
 }
-
+/* Стили для кнопок */
 .styled-button-turqouise {
   border: none;
   color: black;
   background-color: #00ffce;
 }
-
+/* Стили для кнопок с классом styled-button-turqouise, бирюзовый вариант кнопки */
 .infer-widget {
   width: 480px;
   margin: auto;
 }
-
+/* Устанавливает ширину элемента infer-widget на 480px и центрирует его. */
 .links {
   display: flex;
   text-align: center;
@@ -73,3 +75,4 @@ main {
 .links:last-child {
   flex: 1 50%;
 }
+/* Делает элементы внутри блока links гибкими и равномерно распределяет их по ширине. */

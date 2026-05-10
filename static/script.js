@@ -5,11 +5,11 @@
 // After this happens, the model initializes and starts to make predictions
 // On the first prediction, an initialiation step happens in detectFrame()
 // to prepare the canvas on which predictions are displayed.
-
+//Блок объявления переменных
 var bounding_box_colors = {};
-
+//Словарь для хранения цветов ограничивающих рамок для каждого класса объектов
 var user_confidence = 0.6;
-
+//Порог уверенности для отображения предсказаний (по умолчанию 60%)
 // Update the colors in this list to set the bounding box colors
 var color_choices = [
   "#C7FC00",
@@ -25,26 +25,29 @@ var color_choices = [
   "#0000FF",
   "#CCCCCC",
 ];
-
+// Массив цветов для ограничивающих рамок
 var canvas_painted = false;
+// Флаг, указывающий, была ли нарисована канвас
 var canvas = document.getElementById("video_canvas");
+// Получаем элемент canvas по его идентификатору
 var ctx = canvas.getContext("2d");
+// Получаем контекст рисования для canvas
 
 const inferEngine = new inferencejs.InferenceEngine();
+// Создаем экземпляр класса InferenceEngine из библиотеки inferencejs
+// InferenceEngine управляет загрузкой модели и выполнением предсказаний
 var modelWorkerId = null;
-
-
+// Идентификатор рабочего процесса модели, который будет использоваться для выполнения предсказаний
+//Блок обнаружения объектов на видео
 function detectFrame() {
-  // On first run, initialize a canvas
-  // On all runs, run inference using a video frame
-  // For each video frame, draw bounding boxes on the canvas
   if (!modelWorkerId) return requestAnimationFrame(detectFrame);
-
+// Если модель не загружена, повторяем запрос на следующем кадре
   inferEngine.infer(modelWorkerId, new inferencejs.CVImage(video)).then(function(predictions) {
 
     if (!canvas_painted) {
+      //Первичная инициализация канваса (выполняется один раз)
       var video_start = document.getElementById("video1");
-
+    // Получаем элемент видео по его идентификатору
       canvas.top = video_start.top;
       canvas.left = video_start.left;
       canvas.style.top = video_start.top + "px";
@@ -52,29 +55,27 @@ function detectFrame() {
       canvas.style.position = "absolute";
       video_start.style.display = "block";
       canvas.style.display = "absolute";
+      // Устанавливаем стили для канваса и видео
       canvas_painted = true;
-
+      // Устанавливаем флаг, что канвас был нарисован
       var loading = document.getElementById("loading");
       loading.style.display = "none";
     }
     requestAnimationFrame(detectFrame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Очищаем канвас перед рисованием новых предсказаний
     if (video) {
       drawBoundingBoxes(predictions, ctx)
     }
+    // Если видео доступно, рисуем ограничивающие рамки на канвасе
   });
 }
-
+//Блок отрисовки ограничивающих рамок
 function drawBoundingBoxes(predictions, ctx) {
-  // For each prediction, choose or assign a bounding box color choice,
-  // then apply the requisite scaling so bounding boxes appear exactly
-  // around a prediction.
-
-  // If you want to do anything with predictions, start from this function.
-  // For example, you could display them on the web page, check off items on a list,
-  // or store predictions somewhere.
+ 
 
   for (var i = 0; i < predictions.length; i++) {
+    // Перебираем все предсказания
     var confidence = predictions[i].confidence;
 
     console.log(user_confidence)
@@ -82,16 +83,17 @@ function drawBoundingBoxes(predictions, ctx) {
     if (confidence < user_confidence) {
       continue
     }
-
+    // Фильтрация по порогу уверенности: предсказания ниже порога пропускаются
     if (predictions[i].class in bounding_box_colors) {
       ctx.strokeStyle = bounding_box_colors[predictions[i].class];
+      // Если класс уже есть в словаре, используем сохранённый цвет
     } else {
       var color =
         color_choices[Math.floor(Math.random() * color_choices.length)];
       ctx.strokeStyle = color;
-      // remove color from choices
+     // Если класс новый, выбираем случайный цвет из массива color_choices
       color_choices.splice(color_choices.indexOf(color), 1);
-
+      // Удаляем выбранный цвет из массива, чтобы не использовать его повторно
       bounding_box_colors[predictions[i].class] = color;
     }
 
@@ -100,7 +102,7 @@ function drawBoundingBoxes(predictions, ctx) {
     var y = prediction.bbox.y - prediction.bbox.height / 2;
     var width = prediction.bbox.width;
     var height = prediction.bbox.height;
-
+    // Вычисляем координаты и размеры ограничивающей рамки
     ctx.rect(x, y, width, height);
 
     ctx.fillStyle = "rgba(0, 0, 0, 0)";
@@ -111,37 +113,40 @@ function drawBoundingBoxes(predictions, ctx) {
     ctx.strokeRect(x, y, width, height);
     ctx.font = "25px Arial";
     ctx.fillText(prediction.class + " " + Math.round(confidence * 100) + "%", x, y - 10);
+    // Рисуем ограничивающую рамку и текст с классом и уверенностью предсказания
   }
 }
-
+   //Блок инициализации веб-камеры
 function webcamInference() {
-  // Ask for webcam permissions, then run main application.
+  
   var loading = document.getElementById("loading");
   loading.style.display = "block";
-
+  // Отображаем сообщение о загрузке
   navigator.mediaDevices
     .getUserMedia({ video: { facingMode: "environment" } })
+    // Запрашиваем доступ к веб-камере устройства
     .then(function(stream) {
+      // Если доступ получен, создаем элемент видео и устанавливаем его источник на поток с камеры
       video = document.createElement("video");
       video.srcObject = stream;
       video.id = "video1";
 
-      // hide video until the web stream is ready
       video.style.display = "none";
+      // Скрывает видео до полной загрузки метаданных
       video.setAttribute("playsinline", "");
-
+      // Устанавливает атрибут playsinline для воспроизведения видео без перехода в полноэкранный режим на iOS
       document.getElementById("video_canvas").after(video);
-
+      // Добавляет видео после элемента canvas с идентификатором video_canvas
       video.onloadedmetadata = function() {
         video.play();
       }
 
-      // on full load, set the video height and width
+      // После загрузки метаданных (размер кадра, длительность) — начинает воспроизведение видео
       video.onplay = function() {
+        // После загрузки метаданных (размер кадра, длительность) — начинает воспроизведение
         height = video.videoHeight;
         width = video.videoWidth;
-
-        // scale down video by 0.75
+    
 
         video.width = width;
         video.height = height;
@@ -152,21 +157,20 @@ function webcamInference() {
         canvas.style.height = 480 + "px";
         canvas.width = width;
         canvas.height = height;
-
+        // Устанавливает размеры видео и канваса в соответствии с размерами кадра
         document.getElementById("video_canvas").style.display = "block";
       };
 
       ctx.scale(1, 1);
-
-      // Load the Roboflow model using the publishable_key set in index.html
-      // and the model name and version set at the top of this file
+      // Устанавливает масштаб контекста рисования на 1, чтобы избежать искажений
       inferEngine.startWorker(MODEL_NAME, MODEL_VERSION, publishable_key, [{ scoreThreshold: CONFIDENCE_THRESHOLD }])
         .then((id) => {
           modelWorkerId = id;
-          // Start inference
+          // Загружает модель и получает идентификатор рабочего процесса
           detectFrame();
         })
         .catch(function(err) {
+          // Обработка ошибок загрузки модели
           console.log("Ошибка загрузки модели:", err);
           var loading = document.getElementById("loading");
           loading.textContent = "Ошибка загрузки модели: " + (err.message || err);
@@ -175,8 +179,10 @@ function webcamInference() {
         });
     })
     .catch(function(err) {
+      // Обработка ошибок доступа к камере
       console.log(err);
       var loading = document.getElementById("loading");
+  //  Блок обработки ошибок доступа к камере
       if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
         loading.textContent = "Ошибка: веб-камера не найдена. Подключите камеру и обновите страницу.";
       } else if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
@@ -188,11 +194,14 @@ function webcamInference() {
       loading.style.display = "block";
     });
 }
-
+// Блок изменения порога уверенности
 function changeConfidence () {
   user_confidence = document.getElementById("confidence").value / 100;
+  // Обновляет порог уверенности на основе значения ползунка
 }
 
 document.getElementById("confidence").addEventListener("input", changeConfidence);
+// Добавляет обработчик события input для ползунка, который вызывает функцию changeConfidence при изменении значения
 
 webcamInference();
+ // Запускает функцию webcamInference при загрузке страницы
